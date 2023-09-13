@@ -4,6 +4,7 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 
 export function App(): JSX.Element {
     return (
+<<<<<<< HEAD
         <div className="App-header">
             <header></header>
             <Container>
@@ -60,6 +61,15 @@ export function App(): JSX.Element {
                     </Col>
                 </Row>
             </Container>
+=======
+        <div className="App">
+            <header className="App-header">
+                UM COS420 with React Hooks and TypeScript
+            </header>
+            <p>
+                Edit <code>src/App.tsx</code> and save to reload.
+            </p>
+>>>>>>> upstream/task-functions
         </div>
     );
 }
