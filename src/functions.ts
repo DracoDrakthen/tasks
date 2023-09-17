@@ -1,4 +1,5 @@
 import { type } from "os";
+import { stringify } from "querystring";
 
 /**
  * Consumes a single temperature in Fahrenheit (a number) and converts to Celsius
@@ -14,7 +15,18 @@ export function fahrenheitToCelius(temperature: number): number {
  * if the number is greater than zero.
  */
 export function add3(first: number, second: number, third: number): number {
-    return first + second + third;
+    let sum = 0;
+
+    if (first > 0) {
+        sum += first;
+    }
+    if (second > 0) {
+        sum += second;
+    }
+    if (third > 0) {
+        sum += third;
+    }
+    return sum;
 }
 
 /**
@@ -30,15 +42,8 @@ export function shout(message: string): string {
  * mark. Do not use an `if` statement in solving this question.
  */
 export function isQuestion(message: string): boolean {
-    if (message.includes("?")) {
-        return true;
-    } else if (message.includes("!")) {
-        return false;
-    } else if (message.includes("?!")) {
-        return false;
-    } else if (message.includes("!?")) {
-        return false;
-    } else return false;
+    const trimmedMessage = message.trim();
+    return trimmedMessage.endsWith("?");
 }
 
 /**
