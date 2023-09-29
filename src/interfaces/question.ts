@@ -4,6 +4,7 @@ export type QuestionType =
     | "short_answer_question"
     | "true_false_question";
 
+/** A representation of a Question in a quizzing application */
 export interface Question {
     isPublished: () => unknown;
     getText(): () => string;
