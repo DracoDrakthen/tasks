@@ -1,7 +1,17 @@
 /** QuestionType influences how a question is asked and what kinds of answers are possible */
-export type QuestionType = "multiple_choice_question" | "short_answer_question";
+export type QuestionType =
+    | "multiple_choice_question"
+    | "short_answer_question"
+    | "true_false_question";
 
 export interface Question {
+    isPublished: () => unknown;
+    getText(): () => string;
+    toLowerCase: () => unknown;
+    text: undefined;
+    substring: (start: number, end: number) => unknown;
+    /** exspanded option for correct answer*/
+    expectedAnswer: string;
     /** A unique identifier for the question */
     id: number;
     /** The human-friendly title of the question */
