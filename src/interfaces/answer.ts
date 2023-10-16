@@ -1,3 +1,5 @@
+import { Question } from "./question";
+
 /***
  * A representation of a students' answer in a quizzing game
  */

@@ -10,18 +10,50 @@ export function makeBlankQuestion(
     name: string,
     type: QuestionType
 ): Question {
-    const question: Question = new Question();
+    const newQuestion: Question = {
+        id: id,
+        name: name,
+        type: type,
+        body: "", // Initialize body with an empty string
+        expected: "", // Initialize expected with an empty string
+        options: [], // Initialize options as an empty list
+        points: 1, // Set points to 1 by default
+        published: false, // Set published to false by default
+        expectedAnswer: "", // Add the expectedAnswer property with an empty string
+        status: "", // Add the status property with an empty string
+        questionText: "", // Add the questionText property with an empty string
+        text: "", // Add the text property with an empty string
+        title: "", // Add the title property with an empty string
+        setPublished(isPublished: boolean): void {
+            this.published = isPublished;
+        },
+        getStatus(): string {
+            return this.status;
+        },
+        isPublished(): boolean {
+            return this.published;
+        },
+        getText(): string {
+            return this.text;
+        },
+        toLowerCase(): string {
+            return this.text.toLowerCase();
+        },
+        substring(start: number, end: number): string {
+            return this.text.substring(start, end);
+        },
+        setBody(body: string): void {
+            this.body = body;
+        },
+        setExpected(expected: string): void {
+            this.expected = expected;
+        },
+        addOption(option: string): void {
+            this.options.push(option);
+        }
+    };
 
-    question.id = id;
-
-    question.name = name;
-
-    question.type = type;
-
-    question.options = [];
-    question.points = 1;
-
-    return question;
+    return newQuestion;
 }
 
 /**
@@ -32,10 +64,11 @@ export function makeBlankQuestion(
  * HINT: Look up the `trim` and `toLowerCase` functions.
  */
 export function isCorrect(question: Question, answer: string): boolean {
-    const formattedAnswer = answer.toLowerCase().trim();
-    const formattedExspected = question.expectedAnswer.toLowerCase().trim();
+    const formattedAnswer = answer.trim().toLowerCase();
+    const formattedExpectedAnswer = question.expected.trim().toLowerCase();
 
-    return formattedAnswer === formattedExspected;
+    // Compare the formatted answer to the formatted expected answer
+    return formattedAnswer === formattedExpectedAnswer;
 }
 
 /**
@@ -45,12 +78,19 @@ export function isCorrect(question: Question, answer: string): boolean {
  * be exactly one of the options.
  */
 export function isValid(question: Question, answer: string): boolean {
-    const lowercaseQuestion = question.toLowerCase();
-    const lowercaseAnswer = answer.toLowerCase();
+    if (question.type === "short_answer_question") {
+        // For short answer questions, any answer is considered valid
+        return true;
+    } else if (
+        question.type === "multiple_choice_question" &&
+        question.options
+    ) {
+        // For multiple choice questions, the answer must be one of the options
+        return question.options.includes(answer);
+    }
 
-    const trimmedAnswer = lowercaseAnswer.trim();
-
-    return trimmedAnswer === lowercaseQuestion;
+    // If the question type is not recognized or it's a multiple choice question without options, consider it invalid
+    return false;
 }
 
 /**
@@ -60,9 +100,10 @@ export function isValid(question: Question, answer: string): boolean {
  * name "My First Question" would become "9: My First Q".
  */
 export function toShortForm(question: Question): string {
-    const shortenedName = question.substring(0, 10);
-    const questionString = `${question}: ${shortenedName}`;
-    return questionString;
+    const idString = question.id.toString();
+    const nameSubstring = question.name.substring(0, 10);
+
+    return `${idString}: ${nameSubstring}`;
 }
 
 /**
@@ -83,12 +124,14 @@ export function toShortForm(question: Question): string {
  * Check the unit tests for more examples of what this looks like!
  */
 export function toMarkdown(question: Question): string {
-    let markdown = `**Question ${question.id}:** ${question.text}\n\n`;
-    markdown += "Options:\n";
-    for (let i = 0; i < question.options.length; i++) {
-        markdown += `- ${question.options[i]}\n`;
+    let formattedQuestion = `# ${question.name}\n${question.body}`;
+
+    if (question.type === "multiple_choice_question" && question.options) {
+        const optionLines = question.options.map((option) => `- ${option}`);
+        formattedQuestion += "\n" + optionLines.join("\n");
     }
-    return markdown;
+
+    return formattedQuestion;
 }
 
 /**
@@ -107,8 +150,12 @@ export function renameQuestion(question: Question, newName: string): Question {
  * published; if it was published, now it should be not published.
  */
 export function publishQuestion(question: Question): Question {
-    const invertedQuestion = new Question(!question.isPublished());
-    return invertedQuestion;
+    const updatedQuestion: Question = { ...question };
+
+    // Invert the `published` field
+    updatedQuestion.published = !question.published;
+
+    return updatedQuestion;
 }
 
 /**
@@ -119,14 +166,34 @@ export function publishQuestion(question: Question): Question {
  */
 export function duplicateQuestion(id: number, oldQuestion: Question): Question {
     const newQuestion: Question = {
+        id,
         name: `Copy of ${oldQuestion.name}`,
         body: oldQuestion.body,
         type: oldQuestion.type,
-        options: oldQuestion.options,
+        options: [...oldQuestion.options],
         expected: oldQuestion.expected,
-        points: oldQuestion.points
+        points: oldQuestion.points,
+        published: false,
+        expectedAnswer: oldQuestion.expectedAnswer,
+        status: oldQuestion.status,
+        questionText: oldQuestion.questionText,
+        title: oldQuestion.title,
+        text: oldQuestion.text,
+        setPublished: oldQuestion.setPublished,
+        getStatus: oldQuestion.getStatus,
+        isPublished: oldQuestion.isPublished,
+        getText: oldQuestion.getText,
+        toLowerCase: oldQuestion.toLowerCase,
+        substring: oldQuestion.substring,
+        setBody: oldQuestion.setBody,
+        setExpected: oldQuestion.setExpected,
+        addOption: oldQuestion.addOption
     };
 
+    // Add missing properties
+    newQuestion.addOption = oldQuestion.addOption;
+    newQuestion.setBody = oldQuestion.setBody;
+    newQuestion.setExpected = oldQuestion.setExpected;
     return newQuestion;
 }
 
@@ -159,16 +226,11 @@ export function mergeQuestion(
     contentQuestion: Question,
     { points }: { points: number }
 ): Question {
-    const newQuestion: Question = {
+    return {
+        ...contentQuestion,
         id: id,
         name: name,
-        body: contentQuestion.body,
-        type: contentQuestion.type,
-        options: contentQuestion.options,
-        expected: contentQuestion.expected,
-        points: points,
         published: false,
-        expectedAnswer: ""
+        points: points
     };
-    return newQuestion;
 }

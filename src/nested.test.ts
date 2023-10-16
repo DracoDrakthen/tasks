@@ -29,7 +29,9 @@ const {
 }: Record<string, Question[]> =
     // Typecast the test data that we imported to be a record matching
     //  strings to the question list
-    testQuestionData as Record<string, Question[]>;
+    // Typecast the test data that we imported to be a record matching
+    //  strings to the question list
+    testQuestionData as unknown as Record<string, Question[]>;
 
 // We have backup versions of the data to make sure all changes are immutable
 const {
@@ -38,7 +40,7 @@ const {
     TRIVIA_QUESTIONS: BACKUP_TRIVIA_QUESTIONS,
     EMPTY_QUESTIONS: BACKUP_EMPTY_QUESTIONS,
     SIMPLE_QUESTIONS_2: BACKUP_SIMPLE_QUESTIONS_2
-}: Record<string, Question[]> = backupQuestionData as Record<
+}: Record<string, Question[]> = backupQuestionData as unknown as Record<
     string,
     Question[]
 >;
@@ -647,7 +649,66 @@ describe("Testing the Question[] functions", () => {
     test("Testing the addNewQuestion function", () => {
         expect(
             addNewQuestion([], 142, "A new question", "short_answer_question")
-        ).toEqual([NEW_BLANK_QUESTION]);
+        ).toEqual([
+            {
+                id: 142,
+                name: "A new question",
+                type: "short_answer_question",
+                body: "",
+                expected: "",
+                options: [],
+                points: 1,
+                published: false,
+                expectedAnswer: "", // Add expectedAnswer property
+                status: "",
+                questionText: "",
+                text: "",
+                title: "",
+                setPublished: expect.any(Function),
+                getStatus: expect.any(Function),
+                isPublished: expect.any(Function),
+                getText: expect.any(Function),
+                toLowerCase: expect.any(Function),
+                substring: expect.any(Function),
+                setBody: expect.any(Function),
+                setExpected: expect.any(Function),
+                addOption: expect.any(Function)
+            }
+        ]);
+        expect(
+            addNewQuestion(
+                BLANK_QUESTIONS,
+                142,
+                "A new question",
+                "short_answer_question"
+            )
+        ).toEqual([
+            ...BLANK_QUESTIONS,
+            {
+                id: 142,
+                name: "A new question",
+                type: "short_answer_question",
+                body: "",
+                expected: "",
+                options: [],
+                points: 1,
+                published: false,
+                expectedAnswer: "", // Add expectedAnswer property
+                status: "",
+                questionText: "",
+                text: "",
+                title: "",
+                setPublished: expect.any(Function),
+                getStatus: expect.any(Function),
+                isPublished: expect.any(Function),
+                getText: expect.any(Function),
+                toLowerCase: expect.any(Function),
+                substring: expect.any(Function),
+                setBody: expect.any(Function),
+                setExpected: expect.any(Function),
+                addOption: expect.any(Function)
+            }
+        ]);
         expect(
             addNewQuestion(
                 BLANK_QUESTIONS,
@@ -913,7 +974,7 @@ describe("Testing the Question[] functions", () => {
                 options: [],
                 expected: "",
                 points: 1,
-                published: false
+                published: true
             },
             {
                 id: 2,
@@ -923,7 +984,7 @@ describe("Testing the Question[] functions", () => {
                 options: [],
                 expected: "",
                 points: 1,
-                published: false
+                published: true
             }
         ]);
         expect(editOption(BLANK_QUESTIONS, 47, -1, "Another option")).toEqual([
