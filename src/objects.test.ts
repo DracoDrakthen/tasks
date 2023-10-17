@@ -20,15 +20,13 @@ import backupQuestionData from "./data/questions.json";
 const { BLANK_QUESTIONS, SIMPLE_QUESTIONS }: Record<string, Question[]> =
     // Typecast the test data that we imported to be a record matching
     //  strings to the question list
-    // Typecast the test data that we imported to be a record matching
-    //  strings to the question list
-    testQuestionData as unknown as Record<string, Question[]>;
+    testQuestionData as Record<string, Question[]>;
 
 // We have backup versions of the data to make sure all changes are immutable
 const {
     BLANK_QUESTIONS: BACKUP_BLANK_QUESTIONS,
     SIMPLE_QUESTIONS: BACKUP_SIMPLE_QUESTIONS
-}: Record<string, Question[]> = backupQuestionData as unknown as Record<
+}: Record<string, Question[]> = backupQuestionData as Record<
     string,
     Question[]
 >;
@@ -49,38 +47,17 @@ const [
 describe("Testing the object functions", () => {
     //////////////////////////////////
     // makeBlankQuestion
-
     test("Testing the makeBlankQuestion function", () => {
-        const expectedBlankQuestion = {
-            id: 1,
-            name: "Question 1",
-            type: "multiple_choice_question",
-            body: "",
-            expected: "",
-            options: [],
-            points: 1,
-            published: false,
-            expectedAnswer: "",
-            status: "",
-            questionText: "",
-            text: "",
-            title: "",
-            setPublished: expect.any(Function), // Use expect.any(Function) for method properties
-            getStatus: expect.any(Function),
-            isPublished: expect.any(Function),
-            getText: expect.any(Function),
-            toLowerCase: expect.any(Function),
-            substring: expect.any(Function),
-            setBody: expect.any(Function),
-            setExpected: expect.any(Function),
-            addOption: expect.any(Function)
-        };
-
         expect(
             makeBlankQuestion(1, "Question 1", "multiple_choice_question")
-        ).toEqual(expectedBlankQuestion);
+        ).toEqual(BLANK_QUESTIONS[0]);
+        expect(
+            makeBlankQuestion(47, "My New Question", "multiple_choice_question")
+        ).toEqual(BLANK_QUESTIONS[1]);
+        expect(
+            makeBlankQuestion(2, "Question 2", "short_answer_question")
+        ).toEqual(BLANK_QUESTIONS[2]);
     });
-
     ///////////////////////////////////
     // isCorrect
     test("Testing the isCorrect function", () => {
@@ -99,7 +76,6 @@ describe("Testing the object functions", () => {
         expect(isCorrect(SHAPE_QUESTION, "triangle")).toEqual(false);
         expect(isCorrect(SHAPE_QUESTION, "circle")).toEqual(true);
     });
-
     ///////////////////////////////////
     // isValid
     test("Testing the isValid function", () => {
@@ -122,7 +98,6 @@ describe("Testing the object functions", () => {
         expect(isValid(SHAPE_QUESTION, "circle ")).toEqual(false);
         expect(isValid(SHAPE_QUESTION, "rhombus")).toEqual(false);
     });
-
     ///////////////////////////////////
     // toShortForm
     test("Testing the toShortForm function", () => {
@@ -132,7 +107,6 @@ describe("Testing the object functions", () => {
         expect(toShortForm(SHAPE_QUESTION)).toEqual("9: Shapes");
         expect(toShortForm(BLANK_QUESTIONS[1])).toEqual("47: My New Que");
     });
-
     ///////////////////////////////////
     // toMarkdown
     test("Testing the toMarkdown function", () => {
@@ -151,7 +125,6 @@ What shape can you make with one line?
 - triangle
 - circle`);
     });
-
     afterEach(() => {
         expect(ADDITION_QUESTION).toEqual(BACKUP_ADDITION_QUESTION);
         expect(LETTER_QUESTION).toEqual(BACKUP_LETTER_QUESTION);
@@ -159,7 +132,6 @@ What shape can you make with one line?
         expect(COLOR_QUESTION).toEqual(BACKUP_COLOR_QUESTION);
         expect(BLANK_QUESTIONS).toEqual(BACKUP_BLANK_QUESTIONS);
     });
-
     ///////////////////////////////////
     // renameQuestion
     test("Testing the renameQuestion function", () => {
@@ -188,7 +160,6 @@ What shape can you make with one line?
             published: false
         });
     });
-
     ///////////////////////////////////
     // publishQuestion
     test("Testing the publishQuestion function", () => {
@@ -223,7 +194,6 @@ What shape can you make with one line?
             published: true
         });
     });
-
     ///////////////////////////////////
     // duplicateQuestion
     test("Testing the duplicateQuestion function", () => {
@@ -248,7 +218,6 @@ What shape can you make with one line?
             published: false
         });
     });
-
     ///////////////////////////////////
     // addOption
     test("Testing the addOption function", () => {
@@ -273,58 +242,9 @@ What shape can you make with one line?
             published: true
         });
     });
-
     ///////////////////////////////////
     // mergeQuestion
     test("Testing the mergeQuestion function", () => {
-        const ADDITION_QUESTION: Question = {
-            id: 1, // Add a unique id
-            name: "Addition Question",
-            body: "What is 2+2?",
-            type: "short_answer_question",
-            options: [],
-            expected: "4",
-            points: 2,
-            published: false,
-            expectedAnswer: "",
-            status: "",
-            questionText: "",
-            text: "",
-            title: "",
-            setPublished(isPublished: boolean): void {
-                // Implement the method logic here
-            },
-            getStatus(): string {
-                // Implement the method logic here
-                return "";
-            },
-            isPublished(): boolean {
-                // Implement the method logic here
-                return false;
-            },
-            getText(): string {
-                // Implement the method logic here
-                return "";
-            },
-            toLowerCase(): string {
-                // Implement the method logic here
-                return "";
-            },
-            substring(start: number, end: number): string {
-                // Implement the method logic here
-                return "";
-            },
-            setBody(body: string): void {
-                // Implement the method logic here
-            },
-            setExpected(expected: string): void {
-                // Implement the method logic here
-            },
-            addOption(option: string): void {
-                // Implement the method logic here
-            }
-        };
-
         expect(
             mergeQuestion(
                 192,
@@ -342,7 +262,6 @@ What shape can you make with one line?
             points: 2,
             published: false
         });
-
         expect(
             mergeQuestion(
                 99,

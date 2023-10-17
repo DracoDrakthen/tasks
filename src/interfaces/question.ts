@@ -1,36 +1,22 @@
 /** QuestionType influences how a question is asked and what kinds of answers are possible */
-export type QuestionType =
-    | "multiple_choice_question"
-    | "short_answer_question"
-    | "true_or_false";
+export type QuestionType = "multiple_choice_question" | "short_answer_question";
 
 /** A representation of a Question in a quizzing application */
 export interface Question {
+    /** A unique identifier for the question */
     id: number;
+    /** The human-friendly title of the question */
     name: string;
-    type: QuestionType;
+    /** The instructions and content of the Question */
     body: string;
-    expected: string;
+    /** The kind of Question; influences how the user answers and what options are displayed */
+    type: QuestionType;
+    /** The possible answers for a Question (for Multiple Choice questions) */
     options: string[];
+    /** The actually correct answer expected */
+    expected: string;
+    /** How many points this question is worth, roughly indicating its importance and difficulty */
     points: number;
+    /** Whether or not this question is ready to display to students */
     published: boolean;
-    expectedAnswer: string;
-    status: string;
-    questionText: string;
-    text: string;
-    title: string;
-
-    //methods
-    setPublished(isPublished: boolean): void;
-    getStatus(): string;
-    getOptions?: () => string[];
-    getId?: () => number;
-    setName?: (newName: string) => void;
-    isPublished(): boolean;
-    getText(): string;
-    toLowerCase(): string;
-    substring(start: number, end: number): string;
-    setBody(body: string): void;
-    setExpected(expected: string): void;
-    addOption(option: string): void;
 }

@@ -152,14 +152,12 @@ export function makeAnswers(questions: Question[]): Answer[] {
  * each question is now published, regardless of its previous published status.
  */
 export function publishAll(questions: Question[]): Question[] {
-    const publishedQuestions: Question[] = [];
-
-    for (const question of questions) {
-        question.published = true;
-        publishedQuestions.push(question);
-    }
-
-    return publishedQuestions;
+    return questions.map(
+        (question: Question): Question => ({
+            ...question,
+            published: true
+        })
+    );
 }
 
 /***
@@ -193,41 +191,7 @@ export function addNewQuestion(
     name: string,
     type: QuestionType
 ): Question[] {
-    // Function to duplicate a question
-    function duplicateQuestion(question: Question): Question {
-        return {
-            id, // Use the new ID
-            name: question.name,
-            type: question.type,
-            body: question.body,
-            options: [...question.options],
-            expected: question.expected,
-            points: question.points,
-            published: question.published,
-            expectedAnswer: question.expectedAnswer,
-            status: question.status,
-            questionText: question.questionText,
-            text: question.text,
-            title: question.title,
-            setPublished: question.setPublished.bind(question),
-            getStatus: question.getStatus.bind(question),
-            isPublished: question.isPublished.bind(question),
-            getText: question.getText.bind(question),
-            toLowerCase: question.toLowerCase.bind(question),
-            substring: question.substring.bind(question),
-            setBody: question.setBody.bind(question),
-            setExpected: question.setExpected.bind(question),
-            addOption: question.addOption.bind(question)
-        };
-    }
-
-    return questions.map((question) => {
-        if (question.id === id) {
-            return duplicateQuestion(question);
-        } else {
-            return question;
-        }
-    });
+    return [...questions, makeBlankQuestion(id, name, type)];
 }
 
 /***
@@ -240,15 +204,12 @@ export function renameQuestionById(
     targetId: number,
     newName: string
 ): Question[] {
-    return questions.map((question) => {
-        if (question.id === targetId) {
-            // Clone the question and update its name, keeping other properties intact
-            return { ...question, name: newName };
-        } else {
-            // Return other questions as they are
-            return question;
-        }
-    });
+    return questions.map(
+        (question: Question): Question =>
+            question.id === targetId
+                ? { ...question, name: newName }
+                : { ...question }
+    );
 }
 
 /***
@@ -263,28 +224,20 @@ export function changeQuestionTypeById(
     targetId: number,
     newQuestionType: QuestionType
 ): Question[] {
-    const updatedQuestions: Question[] = [];
-
-    // Iterate through each question in the original array
-    for (const question of questions) {
-        // Check if the current question has the target ID
+    return questions.map((question: Question): Question => {
         if (question.id === targetId) {
-            // Create a new question object with the updated question type
-            const updatedQuestion: Question = {
+            return {
                 ...question,
-                type: newQuestionType
+                type: newQuestionType,
+                options:
+                    newQuestionType === "multiple_choice_question"
+                        ? question.options
+                        : []
             };
-
-            // Add the updated question to the new array
-            updatedQuestions.push(updatedQuestion);
         } else {
-            // If the current question does not have the target ID, add it to the new array as is
-            updatedQuestions.push(question);
+            return question;
         }
-    }
-
-    // Return the updated array of questions
-    return updatedQuestions;
+    });
 }
 
 /**
@@ -303,23 +256,19 @@ export function editOption(
     targetOptionIndex: number,
     newOption: string
 ): Question[] {
-    return questions.map((question) => {
-        // If the current question's ID matches the target ID, clone it and update the options
+    return questions.map((question: Question): Question => {
         if (question.id === targetId) {
-            const updatedQuestion: Question = { ...question };
+            const updatedOptions = [...question.options];
             if (targetOptionIndex === -1) {
-                // Add the new option to the end of the options array
-                updatedQuestion.options.push(newOption);
-            } else if (
-                targetOptionIndex >= 0 &&
-                targetOptionIndex < updatedQuestion.options.length
-            ) {
-                // Replace the option at targetOptionIndex with the newOption
-                updatedQuestion.options[targetOptionIndex] = newOption;
+                updatedOptions.push(newOption);
+            } else {
+                updatedOptions[targetOptionIndex] = newOption;
             }
-            return updatedQuestion;
+            return {
+                ...question,
+                options: updatedOptions
+            };
         } else {
-            // For other questions, return them as is
             return question;
         }
     });
@@ -336,21 +285,14 @@ export function duplicateQuestionInArray(
     targetId: number,
     newId: number
 ): Question[] {
-    const targetIndex = questions.findIndex(
-        (question) => question.id === targetId
+    const newquestions = [...questions];
+    const index: number = questions.findIndex(
+        (questions: Question): boolean => targetId === questions.id
     );
-
-    if (targetIndex === -1) {
-        // If the target question with the specified ID is not found, return the original array as-is
-        return questions;
-    }
-
-    // Duplicate the target question and provide the newId as the first argument
-    const duplicatedQuestion = duplicateQuestion(newId, questions[targetIndex]);
-
-    // Create a new array by inserting the duplicated question after the original one
-    const newQuestions = [...questions];
-    newQuestions.splice(targetIndex + 1, 0, duplicatedQuestion);
-
-    return newQuestions;
+    newquestions.splice(
+        1 + index,
+        0,
+        duplicateQuestion(newId, questions[index])
+    );
+    return newquestions;
 }
